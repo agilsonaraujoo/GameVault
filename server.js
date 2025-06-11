@@ -24,13 +24,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// --- MIDDLEWARE DE SEGURANÇA PARA OAUTH ---
-// Headers para permitir a comunicação segura (postMessage) entre o pop-up de login do Google e o seu site.
-app.use((req, res, next) => {
-    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-    res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
-    next();
-});
+
 app.use(express.json());
 
 
