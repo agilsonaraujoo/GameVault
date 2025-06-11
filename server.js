@@ -19,19 +19,18 @@ const allowedOrigin = process.env.CORS_ORIGIN;
 console.log(`[INFO] CORS Origin configurado para aceitar: ${allowedOrigin}`);
 
 const corsOptions = {
-    origin: (origin, callback) => {
-        // 'origin' é a URL do frontend que está fazendo a requisição.
-        console.log(`[CORS CHECK] Requisição recebida da origem: ${origin}`);
-        if (!origin || origin === allowedOrigin) {
-            callback(null, true);
-        } else {
-            console.error(`[CORS BLOCK] A origem ${origin} foi bloqueada.`);
-            callback(new Error('Não permitido pela política de CORS.'));
-        }
-    },
+    origin: process.env.CORS_ORIGIN,
     optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
+
+// --- MIDDLEWARE DE SEGURANÇA PARA OAUTH ---
+// Headers para permitir a comunicação segura (postMessage) entre o pop-up de login do Google e o seu site.
+app.use((req, res, next) => {
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+    next();
+});
 app.use(express.json());
 
 
