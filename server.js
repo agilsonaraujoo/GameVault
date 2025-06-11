@@ -21,7 +21,6 @@ app.use(express.json());
 // Define cabeçalhos para permitir a comunicação segura entre o pop-up de login do Google e o seu site.
 app.use((req, res, next) => {
     res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-    res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
     next();
 });
 app.use(express.static(path.join(process.cwd(), 'dist')));
