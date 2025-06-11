@@ -4,7 +4,7 @@ import RegisterScreen from './RegisterScreen';
 import AuthScreen from './AuthScreen';
 import { decodeJwtResponse } from '../../utils/authUtils';
 
-const AuthRouter = ({ onLoginSuccess, onGoogleLogin }) => {
+const AuthRouter = ({ onLoginSuccess }) => {
     const [view, setView] = useState('initial'); 
 
     
@@ -16,7 +16,7 @@ const AuthRouter = ({ onLoginSuccess, onGoogleLogin }) => {
             case 'register':
                 return <RegisterScreen onRegisterSuccess={onLoginSuccess} onSwitchToLogin={() => setView('login')} onBack={() => setView('initial')} />;
             default:
-                return <AuthScreen onGoogleLoginSuccess={onGoogleLogin} onEmailLoginClick={() => setView('login')} />;
+                return <AuthScreen onEmailLoginClick={() => setView('login')} />;
         }
     };
 

@@ -1,53 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Gamepad2 } from 'lucide-react';
-import { GOOGLE_CLIENT_ID } from '../../constants/googleConstants';
 
-const AuthScreen = ({ onGoogleLoginSuccess, onEmailLoginClick }) => {
-    useEffect(() => {
-        if (window.google?.accounts?.id) { // Verifica se a biblioteca GSI já foi carregada
-            window.google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: onGoogleLoginSuccess
-            });
-             window.google.accounts.id.renderButton(
-                document.getElementById("google-signin-button"),
-                { theme: "outline", size: "large", type: "standard", text: "continue_with", width: "320", logo_alignment: "left"}
-            );
-            return; // Pula a injeção do script se já estiver disponível
-        }
-
-        // Se não estiver carregado, cria e anexa o script
-        const script = document.createElement('script');
-        script.src = 'https://accounts.google.com/gsi/client';
-        script.async = true;
-        script.defer = true;
-        script.onload = () => {
-            if (window.google && window.google.accounts && window.google.accounts.id) {
-                window.google.accounts.id.initialize({
-                    client_id: GOOGLE_CLIENT_ID,
-                    callback: onGoogleLoginSuccess
-                });
-                window.google.accounts.id.renderButton(
-                    document.getElementById("google-signin-button"),
-                    { theme: "outline", size: "large", type: "standard", text: "continue_with", width: "320", logo_alignment: "left"}
-                );
-            } else {
-                console.error('Google Sign-In library failed to load.');
-            }
-        };
-        script.onerror = () => {
-            console.error('Error loading Google Sign-In script.');
-        };
-        document.body.appendChild(script);
-
-        // Função de limpeza para remover o script se o componente for desmontado
-        return () => {
-            const scriptElement = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
-            if (scriptElement) {
-                document.body.removeChild(scriptElement);
-            }
-        };
-    }, [onGoogleLoginSuccess]);
+const AuthScreen = ({ onEmailLoginClick }) => {
 
     return (
         <div className="w-full max-w-md p-8 space-y-8 bg-gray-800 rounded-2xl shadow-2xl text-center">
@@ -61,7 +15,7 @@ const AuthScreen = ({ onGoogleLoginSuccess, onEmailLoginClick }) => {
                 >
                     Entrar com E-mail e Senha
                 </button>
-                <div id="google-signin-button" className="flex justify-center"></div>
+
             </div>
         </div>
     );
