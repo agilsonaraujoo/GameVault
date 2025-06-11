@@ -13,13 +13,13 @@ const Header = ({ user, onSignOut, onAddNewGame, onAddMultiple, searchTerm, onSe
     return (
         <header className="bg-gray-800/80 backdrop-blur-sm sticky top-0 z-40 shadow-lg">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex items-center justify-between h-16 gap-4">
+                <div className="flex items-center justify-between h-16 gap-2 sm:gap-4">
                     <div className="flex-shrink-0 flex items-center gap-3">
                         <Gamepad2 className="h-8 w-8 text-indigo-400" />
                         <span className="text-2xl font-bold hidden sm:inline">GameVault</span>
                     </div>
                     
-                    <div className="flex-1 flex justify-center px-4">
+                    <div className="flex-1 flex justify-center px-2 sm:px-4">
                         <div className="w-full max-w-xl relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                  <Search className="text-gray-400" size={20} />
@@ -77,10 +77,10 @@ const Header = ({ user, onSignOut, onAddNewGame, onAddMultiple, searchTerm, onSe
                             <img 
                                 src={user.picture || `https://placehold.co/40x40/7c3aed/ffffff?text=${user.name ? user.name.charAt(0).toUpperCase() : 'U'}`}
                                 alt={user.name || 'Usuário'}
-                                className="w-10 h-10 rounded-full border-2 border-indigo-400"
+                                className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-indigo-400"
                             />
-                             <button onClick={onSignOut} className="p-2 rounded-full hover:bg-gray-700 transition-colors">
-                                <LogOut size={22} />
+                             <button onClick={onSignOut} className="p-1 md:p-2 rounded-full hover:bg-gray-700 transition-colors">
+                                <LogOut size={20} />
                             </button>
                         </div>
                     </div>
