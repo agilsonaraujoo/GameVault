@@ -17,8 +17,13 @@ export default function App() {
     // Carrega o usuário do localStorage na renderização inicial
     useEffect(() => {
         const storedUser = localStorage.getItem('game-catalog-user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+        if (storedUser && storedUser !== 'undefined') {
+            try {
+                setUser(JSON.parse(storedUser));
+            } catch (error) {
+                console.error("Falha ao analisar o usuário do localStorage, limpando.", error);
+                localStorage.removeItem('game-catalog-user');
+            }
         }
         setIsLoading(false);
     }, []);
