@@ -60,26 +60,27 @@ export default function App() {
         return profile.given_name || (profile.name || '').split(' ')[0];
     };
     
-            const handleSetCurrentUser = (profile) => {
+            const handleSetCurrentUser = useCallback((profile) => {
+        if (!profile) return;
         const firstName = getFirstName(profile);
         setNotification({ message: `Bem-vindo(a), ${firstName}!`, type: 'success' });
         setUser(profile);
         localStorage.setItem('game-catalog-user', JSON.stringify(profile));
-    };
+    }, []);
 
-        const handleGoogleLogin = async (response) => {
+    const handleGoogleLogin = useCallback(async (response) => {
         setIsLoading(true);
         try {
             const { token, user } = await apiService.post('/auth/google/callback', { credential: response.credential });
-            localStorage.setItem('game-catalog-token', token); // O token JWT é salvo para futuras requisições autenticadas
+            localStorage.setItem('game-catalog-token', token);
             handleSetCurrentUser(user);
         } catch (error) {
             console.error('Erro durante o login com o Google:', error);
-            setNotification({ message: error.message, type: 'error' });
+            setNotification({ message: error.message || 'Falha no login com Google', type: 'error' });
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [handleSetCurrentUser]);
 
     const handleLogout = () => {
         setUser(null);
