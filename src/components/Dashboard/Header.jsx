@@ -34,7 +34,7 @@ const Header = ({ user, onSignOut, onAddNewGame, onAddMultiple, searchTerm, onSe
                         </div>
                     </div>
 
-                    <div className="flex-shrink-0 flex items-center gap-2">
+                    <div className="flex-shrink-0 flex items-center justify-end flex-wrap gap-2">
                         {isSelectionMode ? (
                             <>
                                 {selectedGamesCount > 0 && (
@@ -43,7 +43,7 @@ const Header = ({ user, onSignOut, onAddNewGame, onAddMultiple, searchTerm, onSe
                                         className="hidden md:flex items-center gap-2 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-500 transition-colors"
                                     >
                                         <Trash2 size={20} />
-                                        <span className="hidden xl:inline">Excluir {selectedGamesCount} {selectedGamesCount > 1 ? 'itens' : 'item'}</span>
+                                        <span className="hidden lg:inline">Excluir {selectedGamesCount} {selectedGamesCount > 1 ? 'itens' : 'item'}</span>
                                     </button>
                                 )}
                                 <button 
@@ -51,25 +51,25 @@ const Header = ({ user, onSignOut, onAddNewGame, onAddMultiple, searchTerm, onSe
                                     className="hidden md:flex items-center gap-2 px-4 py-2 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-500 transition-colors"
                                 >
                                     <X size={20} />
-                                    <span className="hidden xl:inline">Cancelar</span>
+                                    <span className="hidden lg:inline">Cancelar</span>
                                 </button>
                             </>
                         ) : (
                             <>
                                 <button onClick={onAddNewGame} className="hidden md:flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-500 transition-colors">
                                     <PlusCircle size={20} />
-                                    <span className="hidden xl:inline">Adicionar Jogo</span>
+                                    <span className="hidden lg:inline">Adicionar Jogo</span>
                                 </button>
                                 <button onClick={onAddMultiple} className="hidden md:flex items-center gap-2 px-4 py-2 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-500 transition-colors">
                                     <Layers size={20} />
-                                    <span className="hidden xl:inline">Adicionar Vários</span>
+                                    <span className="hidden lg:inline">Adicionar Vários</span>
                                 </button>
                                 <button 
                                     onClick={onToggleSelectionMode} 
                                     className="hidden md:flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-500 transition-colors"
                                 >
                                     <CheckSquare size={20} />
-                                    <span className="hidden xl:inline">Selecionar</span>
+                                    <span className="hidden lg:inline">Selecionar</span>
                                 </button>
                             </>
                         )}
