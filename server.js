@@ -14,12 +14,29 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // --- MIDDLEWARE ---
-// Configuração do CORS para permitir requisições apenas da URL do frontend.
-const allowedOrigin = process.env.CORS_ORIGIN;
-console.log(`[INFO] CORS Origin configurado para aceitar: ${allowedOrigin}`);
+// Adiciona cabeçalhos de segurança para permitir o login com o Google
+app.use((req, res, next) => {
+    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
+    res.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+    next();
+});
+
+// Configuração do CORS para permitir requisições de origens específicas.
+const allowedOrigins = [
+    'https://gamevault.onrender.com', // Frontend em produção
+    'http://localhost:5173'           // Frontend em desenvolvimento
+];
 
 const corsOptions = {
-    origin: process.env.CORS_ORIGIN,
+    origin: function (origin, callback) {
+        // Permitir requisições sem 'origin' (ex: Postman) ou se a origem estiver na lista
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            console.error(`CORS Blocked: Origin ${origin} is not in the allowed list.`);
+            callback(new Error('A política de CORS não permite acesso a partir desta origem.'));
+        }
+    },
     optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
