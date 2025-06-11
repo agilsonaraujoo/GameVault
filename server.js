@@ -15,8 +15,20 @@ const PORT = process.env.PORT || 3000;
 
 // --- MIDDLEWARE ---
 // Configuração do CORS para permitir requisições apenas da URL do frontend.
+const allowedOrigin = process.env.CORS_ORIGIN;
+console.log(`[INFO] CORS Origin configurado para aceitar: ${allowedOrigin}`);
+
 const corsOptions = {
-    origin: process.env.CORS_ORIGIN,
+    origin: (origin, callback) => {
+        // 'origin' é a URL do frontend que está fazendo a requisição.
+        console.log(`[CORS CHECK] Requisição recebida da origem: ${origin}`);
+        if (!origin || origin === allowedOrigin) {
+            callback(null, true);
+        } else {
+            console.error(`[CORS BLOCK] A origem ${origin} foi bloqueada.`);
+            callback(new Error('Não permitido pela política de CORS.'));
+        }
+    },
     optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
