@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Gamepad2 } from 'lucide-react';
 import AuthRouter from './components/Auth/AuthRouter';
 import GameDashboard from './components/Dashboard/GameDashboard';
