@@ -7,7 +7,20 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    // Vite procurará por index.html na raiz do projeto por padrão
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // Separa o firebase em seu próprio chunk, pois é uma grande dependência.
+          if (id.includes('firebase')) {
+            return 'firebase';
+          }
+          // Agrupa outras dependências do node_modules em um chunk 'vendor'.
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        },
+      },
+    },
   },
   base: './',
 });
