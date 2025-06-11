@@ -78,16 +78,18 @@ export default function App() {
 
     const handleSaveGame = async (gameToSave) => {
         if (!user) return;
+        const { id, ...gameData } = gameToSave;
+
         try {
-            if (gameToSave.id) {
+            if (id) {
                 // Atualiza um jogo existente
-                const gameDocRef = doc(db, 'users', user.uid, 'games', gameToSave.id);
-                await updateDoc(gameDocRef, gameToSave);
+                const gameDocRef = doc(db, 'users', user.uid, 'games', id);
+                await updateDoc(gameDocRef, gameData);
                 setNotification({ message: 'Jogo atualizado!', type: 'success' });
             } else {
-                // Adiciona um novo jogo
+                // Adiciona um novo jogo, sem o campo 'id'
                 const gamesCollectionRef = collection(db, 'users', user.uid, 'games');
-                await addDoc(gamesCollectionRef, { ...gameToSave, createdAt: new Date().toISOString() });
+                await addDoc(gamesCollectionRef, { ...gameData, createdAt: new Date().toISOString() });
                 setNotification({ message: 'Jogo salvo!', type: 'success' });
             }
         } catch (error) {
@@ -101,8 +103,9 @@ export default function App() {
         const batch = writeBatch(db);
         const gamesCollectionRef = collection(db, 'users', user.uid, 'games');
         newGames.forEach(game => {
+            const { id, ...gameData } = game;
             const newDocRef = doc(gamesCollectionRef); // Cria uma referência com ID automático
-            batch.set(newDocRef, { ...game, createdAt: new Date().toISOString() });
+            batch.set(newDocRef, { ...gameData, createdAt: new Date().toISOString() });
         });
         try {
             await batch.commit();
