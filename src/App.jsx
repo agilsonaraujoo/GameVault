@@ -143,6 +143,18 @@ export default function App() {
         }
     };
 
+    const toggleGameSelection = (gameId) => {
+        setSelectedGames(prevSelected => {
+            const newSelected = new Set(prevSelected);
+            if (newSelected.has(gameId)) {
+                newSelected.delete(gameId);
+            } else {
+                newSelected.add(gameId);
+            }
+            return newSelected;
+        });
+    };
+
     const toggleSelectionMode = () => {
         setSelectionMode(prevMode => {
             // Ao sair do modo de seleção, limpa os jogos selecionados
