@@ -8,7 +8,7 @@ import BulkAddModal from '../Modals/BulkAddModal';
 import GameDetailModal from '../Modals/GameDetailModal';
 import ConfirmDeleteModal from '../Modals/ConfirmDeleteModal';
 
-const GameDashboard = ({ user, games, onSignOut, onSaveGame, onDeleteGame, onBulkSave }) => {
+const GameDashboard = ({ user, games, onSignOut, onSaveGame, onDeleteGame, onBulkSave, selectedGames, onToggleGameSelection, onDeleteSelectedGames, isSelectionMode, onToggleSelectionMode }) => {
     const [isFormModalOpen, setFormModalOpen] = useState(false);
     const [isBulkModalOpen, setBulkModalOpen] = useState(false);
     const [isDetailModalOpen, setDetailModalOpen] = useState(false);
@@ -31,9 +31,9 @@ const GameDashboard = ({ user, games, onSignOut, onSaveGame, onDeleteGame, onBul
     };
 
     const handleRegisterFromSuggestion = (gameName) => {
-        setDetailModalOpen(false); // Close detail modal
-        setSelectedGame({ name: gameName }); // Pre-fill name
-        setFormModalOpen(true); // Open form modal
+        setDetailModalOpen(false); // Fecha o modal de detalhes
+        setSelectedGame({ name: gameName }); // Pré-preenche o nome
+        setFormModalOpen(true); // Abre o modal de formulário
     };
 
     const handleFormSave = (game) => {
@@ -55,6 +55,10 @@ const GameDashboard = ({ user, games, onSignOut, onSaveGame, onDeleteGame, onBul
                 onAddMultiple={handleAddMultipleGames}
                 searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
+                selectedGamesCount={selectedGames.size}
+                onDeleteSelected={onDeleteSelectedGames}
+                isSelectionMode={isSelectionMode}
+                onToggleSelectionMode={onToggleSelectionMode}
             />
             <main className="p-4 sm:p-6 lg:p-8">
                 {games.length > 0 ? (
@@ -67,6 +71,10 @@ const GameDashboard = ({ user, games, onSignOut, onSaveGame, onDeleteGame, onBul
                                     onEdit={() => handleEditGame(game)}
                                     onDelete={() => handleDeleteRequest(game)}
                                     onView={() => handleViewDetails(game)}
+                                    isSelected={selectedGames.has(game.id)}
+                                    onToggleSelection={() => onToggleGameSelection(game.id)}
+                                    isSelectionMode={isSelectionMode}
+                                    onToggleSelectionMode={onToggleSelectionMode}
                                 />
                             ))}
                         </div>

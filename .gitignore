@@ -91,7 +91,6 @@ out
 
 # Nuxt.js build output
 .nuxt
-dist
 
 # Svelte build output
 .svelte-kit

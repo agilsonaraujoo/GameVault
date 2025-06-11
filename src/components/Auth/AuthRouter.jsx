@@ -4,17 +4,10 @@ import RegisterScreen from './RegisterScreen';
 import AuthScreen from './AuthScreen';
 import { decodeJwtResponse } from '../../utils/authUtils';
 
-const AuthRouter = ({ onLoginSuccess }) => {
+const AuthRouter = ({ onLoginSuccess, onGoogleLogin }) => {
     const [view, setView] = useState('initial'); 
 
-    const handleGoogleLoginSuccess = (credentialResponse) => {
-        const profile = decodeJwtResponse(credentialResponse.credential);
-        if (profile) {
-            onLoginSuccess(profile);
-        } else {
-            console.error("Could not decode user profile.");
-        }
-    };
+    
 
     const renderView = () => {
         switch (view) {
@@ -23,7 +16,7 @@ const AuthRouter = ({ onLoginSuccess }) => {
             case 'register':
                 return <RegisterScreen onRegisterSuccess={onLoginSuccess} onSwitchToLogin={() => setView('login')} onBack={() => setView('initial')} />;
             default:
-                return <AuthScreen onGoogleLoginSuccess={handleGoogleLoginSuccess} onEmailLoginClick={() => setView('login')} />;
+                return <AuthScreen onGoogleLoginSuccess={onGoogleLogin} onEmailLoginClick={() => setView('login')} />;
         }
     };
 

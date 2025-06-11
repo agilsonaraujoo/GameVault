@@ -2,35 +2,67 @@ import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
+import 'dotenv/config';
+import { OAuth2Client } from 'google-auth-library';
+import jwt from 'jsonwebtoken';
+// import gameRoutes from './routes/gameRoutes.js';
 
+// --- CONFIGURAÇÃO INICIAL ---
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 const app = express();
-const PORT = process.env.PORT || 3007; // Alterado para 3007 para evitar conflitos
+const PORT = process.env.PORT || 3000;
 
-// Configuração do CORS
-app.use(cors({
-    origin: '*', // Em produção, substitua pelo seu domínio
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
-
-// Middleware para log de requisições
-app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-    next();
-});
-
-// Serve os arquivos estáticos da pasta 'dist'
+// --- MIDDLEWARE ---
+app.use(cors());
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// Para qualquer outra rota, serve o index.html (necessário para o roteamento do lado do cliente do React)
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// --- CONFIGURAÇÃO DO GOOGLE AUTH ---
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const users = []; // Repositório de usuários em memória para demonstração
+const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key'; // Use uma variável de ambiente em produção
+
+// --- ROTAS DA API ---
+app.post('/api/auth/google/callback', async (req, res) => {
+    const { credential } = req.body;
+    if (!credential) {
+        return res.status(400).json({ message: 'Nenhuma credencial fornecida' });
+    }
+
+    try {
+        const ticket = await client.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+        const { sub, email, name, picture } = payload;
+
+        let user = users.find(u => u.googleId === sub);
+        if (!user) {
+            user = { googleId: sub, email, name, picture };
+            users.push(user);
+        }
+
+        const token = jwt.sign({ userId: user.googleId, email: user.email }, JWT_SECRET, { expiresIn: '1h' });
+
+        res.status(200).json({ token, user });
+
+    } catch (error) {
+        console.error('Erro ao verificar o token do Google:', error);
+        res.status(401).json({ message: 'Token do Google inválido' });
+    }
 });
 
+// app.use('/api/games', gameRoutes);
+
+// --- ROTA PARA O FRONTEND ---
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+// --- INICIALIZAÇÃO DO SERVIDOR ---
 app.listen(PORT, () => {
-  console.log(`Servidor Node.js rodando na porta ${PORT}`);
-  console.log(`Acesse: http://localhost:${PORT}`);
+    console.log(`Servidor rodando na porta ${PORT}`);
 });

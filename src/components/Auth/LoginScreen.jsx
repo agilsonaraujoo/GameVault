@@ -13,16 +13,16 @@ const LoginScreen = ({ onLoginSuccess, onSwitchToRegister, onBack }) => {
         const users = getStoredUsers();
         const foundUser = users.find(u => u.email === email);
         
-        // --- SECURITY WARNING ---
-        // NEVER compare passwords directly on the client-side in a real application.
-        // This is for DEMONSTRATION PURPOSES ONLY.
-        // Passwords should be hashed and verified on a backend server.
-        if (foundUser && foundUser.password === password) { // UNSAFE: Direct password comparison
+        // --- AVISO DE SEGURANÇA ---
+        // NUNCA compare senhas diretamente no lado do cliente em uma aplicação real.
+        // Isso é APENAS PARA FINS DE DEMONSTRAÇÃO.
+        // As senhas devem ser hasheadas e verificadas em um servidor backend.
+        if (foundUser && foundUser.password === password) { // INSEGURO: Comparação direta de senha
             onLoginSuccess(foundUser);
         } else {
             setError('E-mail ou senha inválidos.');
         }
-        // --- END SECURITY WARNING ---
+        // --- FIM DO AVISO DE SEGURANÇA ---
     };
 
     return (

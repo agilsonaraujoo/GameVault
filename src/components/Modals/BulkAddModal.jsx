@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import Modal from './Modal';
 import { Sparkles, Layers } from 'lucide-react';
 
-// --- IMPORTANT: API KEY SECURITY ---
+// --- IMPORTANTE: SEGURANÇA DA CHAVE DE API ---
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-// --- END API KEY SECURITY ---
+// --- FIM DA SEGURANÇA DA CHAVE DE API ---
 
 const BulkAddModal = ({ isOpen, onClose, onBulkSave }) => {
     const [gameNamesText, setGameNamesText] = useState('');
@@ -46,7 +46,7 @@ const BulkAddModal = ({ isOpen, onClose, onBulkSave }) => {
         const gamesData = [];
 
         for (const name of gameNameList) {
-            const prompt = `Para o jogo "${name}", forneça uma descrição muito curta (1-2 frases), as plataformas principais (PC, PlayStation 5, Xbox Series X/S, Nintendo Switch etc.), o preço aproximado em BRL (ou "Gratuito") e um link de uma loja digital (se disponível). Responda em formato JSON com chaves: "name" (string, o nome original), "description" (string), "platforms" (array de strings), "price" (string), "imageUrl" (string, deixe vazio por enquanto), "dealLink" (string).`;
+                        const prompt = `Para o jogo "${name}", forneça uma descrição muito curta (1-2 frases), as plataformas principais (PC, PlayStation 5, Xbox Series X/S, Nintendo Switch etc.), o preço aproximado em BRL (ou "Gratuito") e um link de uma loja digital (se disponível). **Importante: Se um preço específico não for encontrado, o valor do preço deve ser uma string vazia.** Responda em formato JSON com chaves: "name" (string, o nome original), "description" (string), "platforms" (array de strings), "price" (string), "imageUrl" (string, deixe vazio por enquanto), "dealLink" (string).`;
             try {
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
                 const payload = {
@@ -64,7 +64,7 @@ const BulkAddModal = ({ isOpen, onClose, onBulkSave }) => {
                 if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
                     const parsedJson = JSON.parse(result.candidates[0].content.parts[0].text);
                     gamesData.push({ 
-                        name: parsedJson.name || name, // Use original name as fallback
+                        name: parsedJson.name || name, // Usa o nome original como fallback
                         description: parsedJson.description || '', 
                         platforms: parsedJson.platforms || [], 
                         price: parsedJson.price || '', 
@@ -88,9 +88,9 @@ const BulkAddModal = ({ isOpen, onClose, onBulkSave }) => {
         const gamesToSave = processedGames.filter(game => !game.error && game.name);
         if (gamesToSave.length > 0) {
             onBulkSave(gamesToSave);
-            onClose(); // Close modal after saving
-            setGameNamesText(''); // Clear text area
-            setProcessedGames([]); // Clear processed games
+            onClose(); // Fecha o modal após salvar
+            setGameNamesText(''); // Limpa a área de texto
+            setProcessedGames([]); // Limpa os jogos processados
         } else {
             alert("Nenhum jogo válido para salvar. Verifique os erros ou processe novos jogos.");
         }

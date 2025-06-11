@@ -19,22 +19,22 @@ const RegisterScreen = ({ onRegisterSuccess, onSwitchToLogin, onBack }) => {
             return;
         }
 
-        // --- SECURITY WARNING ---
-        // NEVER store plain text passwords, even in localStorage, for a real application.
-        // This is for DEMONSTRATION PURPOSES ONLY.
-        // Passwords should be securely hashed and managed by a backend server.
+        // --- AVISO DE SEGURANÇA ---
+        // NUNCA armazene senhas em texto puro, nem mesmo no localStorage, em uma aplicação real.
+        // Isso é APENAS PARA FINS DE DEMONSTRAÇÃO.
+        // As senhas devem ser hasheadas e gerenciadas de forma segura por um servidor backend.
         const newUser = {
             id: `email_${Date.now()}`,
             name,
             email,
-            password, // UNSAFE: Storing plain text password
+            password, // INSEGURO: Armazenando senha em texto puro
             picture: `https://placehold.co/40x40/7c3aed/ffffff?text=${name.charAt(0).toUpperCase()}`
         };
-        // --- END SECURITY WARNING ---
+        // --- FIM DO AVISO DE SEGURANÇA ---
         
         const updatedUsers = [...users, newUser];
         storeUsers(updatedUsers);
-        onRegisterSuccess(newUser); // Pass the newly created user object to the login success handler
+        onRegisterSuccess(newUser); // Passa o objeto do usuário recém-criado para o manipulador de sucesso de login
     };
 
     return (

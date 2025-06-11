@@ -1,8 +1,8 @@
-// --- SECURITY WARNING ---
-// The functions below simulate user management in localStorage.
-// This is for DEMONSTRATION PURPOSES ONLY and is NOT SECURE.
-// In a real application, never store passwords, even hashed, on the client-side.
-// User authentication and password management MUST be handled by a secure backend server.
+// --- AVISO DE SEGURANÇA ---
+// As funções abaixo simulam o gerenciamento de usuários no localStorage.
+// Isto é APENAS PARA FINS DE DEMONSTRAÇÃO e NÃO É SEGURO.
+// Em uma aplicação real, nunca armazene senhas, mesmo que com hash, no lado do cliente.
+// A autenticação de usuários e o gerenciamento de senhas DEVEM ser tratados por um servidor backend seguro.
 
 export const getStoredUsers = () => {
     const users = localStorage.getItem('game-catalog-all-users');
@@ -12,9 +12,9 @@ export const getStoredUsers = () => {
 export const storeUsers = (users) => {
     localStorage.setItem('game-catalog-all-users', JSON.stringify(users));
 };
-// --- END SECURITY WARNING ---
+// --- FIM DO AVISO DE SEGURANÇA ---
 
-// Helper to decode JWT tokens from Google
+// Função auxiliar para decodificar tokens JWT do Google
 export function decodeJwtResponse(token) {
     try {
         const base64Url = token.split('.')[1];

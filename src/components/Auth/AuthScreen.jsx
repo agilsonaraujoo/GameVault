@@ -4,15 +4,15 @@ import { GOOGLE_CLIENT_ID } from '../../constants/googleConstants';
 
 const AuthScreen = ({ onGoogleLoginSuccess, onEmailLoginClick }) => {
     useEffect(() => {
-        if (window.google?.accounts?.id) { // Check if GSI library is already loaded and initialized
+        if (window.google?.accounts?.id) { // Verifica se a biblioteca GSI já foi carregada e inicializada
              window.google.accounts.id.renderButton(
                 document.getElementById("google-signin-button"),
                 { theme: "outline", size: "large", type: "standard", text: "continue_with", width: "320", logo_alignment: "left"}
             );
-            return; // Skip script injection if already available
+            return; // Pula a injeção do script se já estiver disponível
         }
 
-        // If not loaded, create and append the script
+        // Se não estiver carregado, cria e anexa o script
         const script = document.createElement('script');
         script.src = 'https://accounts.google.com/gsi/client';
         script.async = true;
@@ -36,7 +36,7 @@ const AuthScreen = ({ onGoogleLoginSuccess, onEmailLoginClick }) => {
         };
         document.body.appendChild(script);
 
-        // Cleanup function to remove the script if the component unmounts
+        // Função de limpeza para remover o script se o componente for desmontado
         return () => {
             const scriptElement = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
             if (scriptElement) {

@@ -3,12 +3,12 @@ import { Sparkles } from 'lucide-react';
 import Modal from './Modal';
 import { ALL_PLATFORMS } from '../../constants/gameConstants';
 
-// --- IMPORTANT: API KEY SECURITY ---
-// NEVER embed API keys directly in your frontend code in a real application.
-// This is for DEMONSTRATION PURPOSES ONLY.
-// API keys should be stored securely on a backend server and accessed via authenticated API calls.
+// --- IMPORTANTE: SEGURANÇA DA CHAVE DE API ---
+// NUNCA incorpore chaves de API diretamente no seu código de frontend em uma aplicação real.
+// Isto é APENAS PARA FINS DE DEMONSTRAÇÃO.
+// Chaves de API devem ser armazenadas de forma segura em um servidor backend e acessadas através de chamadas de API autenticadas.
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-// --- END API KEY SECURITY ---
+// --- FIM DA SEGURANÇA DA CHAVE DE API ---
 
 const GameFormModal = ({ isOpen, onClose, onSave, gameToEdit }) => {
     const [name, setName] = useState('');
@@ -29,7 +29,7 @@ const GameFormModal = ({ isOpen, onClose, onSave, gameToEdit }) => {
             setPrice(gameToEdit.price || '');
             setDealLink(gameToEdit.dealLink || '');
         } else {
-            // Reset form for new game
+            // Reseta o formulário para um novo jogo
             setName(''); 
             setPlatforms([]); 
             setDescription(''); 
@@ -37,7 +37,7 @@ const GameFormModal = ({ isOpen, onClose, onSave, gameToEdit }) => {
             setPrice(''); 
             setDealLink('');
         }
-        setApiError(''); // Clear API error when modal opens or gameToEdit changes
+        setApiError(''); // Limpa o erro da API quando o modal abre ou gameToEdit muda
     }, [gameToEdit, isOpen]);
 
     const handlePlatformChange = (platformName) => {
@@ -60,7 +60,7 @@ const GameFormModal = ({ isOpen, onClose, onSave, gameToEdit }) => {
         }
         setIsGeneratingInfo(true);
         setApiError('');
-        const prompt = `Baseado no nome do jogo "${name}", gere o seguinte em **português do Brasil**: uma descrição muito curta (1-2 frases), identifique as plataformas em que ele está disponível, forneça seu preço atual em BRL de uma loja digital principal (como Steam, Nuuvem, Epic Games, PlayStation Store, Xbox Store) e um link direto para a página de compra dessa loja. Se o jogo for gratuito (free-to-play), o preço deve ser a string "Gratuito". O valor do preço deve usar uma **vírgula como separador decimal** (ex: "299,90") ou a palavra "Gratuito". O link deve ser válido. As plataformas possíveis são: ${ALL_PLATFORMS.join(', ')}. Forneça a resposta em formato JSON com as chaves "description" (string), "platforms" (array de strings), "price" (string) e "dealLink" (string).`;
+                const prompt = `Baseado no nome do jogo "${name}", gere o seguinte em **português do Brasil**: uma descrição muito curta (1-2 frases), identifique as plataformas em que ele está disponível, forneça seu preço atual em BRL de uma loja digital principal (como Steam, Nuuvem, Epic Games, PlayStation Store, Xbox Store) e um link direto para a página de compra dessa loja. Se o jogo for gratuito (free-to-play), o preço deve ser a string "Gratuito". O valor do preço deve usar uma **vírgula como separador decimal** (ex: "299,90") ou a palavra "Gratuito". **Importante: Se um preço específico não for encontrado, o valor do preço deve ser uma string vazia.** O link deve ser válido. As plataformas possíveis são: ${ALL_PLATFORMS.join(', ')}. Forneça a resposta em formato JSON com as chaves "description" (string), "platforms" (array de strings), "price" (string) e "dealLink" (string).`;
         
         try {
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${GEMINI_API_KEY}`;
@@ -68,8 +68,8 @@ const GameFormModal = ({ isOpen, onClose, onSave, gameToEdit }) => {
               contents: [{ parts: [{ text: prompt }] }],
               generationConfig: {
                   responseMimeType: "application/json",
-                  // Note: responseSchema might not be supported by all Gemini models or versions in the same way.
-                  // For simplicity, we'll parse the text response directly.
+                  // Nota: responseSchema pode não ser suportado por todos os modelos ou versões do Gemini da mesma forma.
+                // Por simplicidade, vamos analisar a resposta de texto diretamente.
               }
             };
 
@@ -168,30 +168,7 @@ const GameFormModal = ({ isOpen, onClose, onSave, gameToEdit }) => {
                          <label htmlFor="dealLink" className="block text-sm font-medium text-gray-300 mb-1">Link da Oferta</label>
                         <input type="url" id="dealLink" placeholder="https://..." value={dealLink} onChange={e => setDealLink(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"/>
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">URL da Capa do Jogo</label>
-                        <input 
-                            type="url" 
-                            value={imageUrl} 
-                            onChange={e => setImageUrl(e.target.value)} 
-                            placeholder="https://exemplo.com/imagem.jpg" 
-                            className="w-full bg-gray-700 border border-gray-600 rounded-md px-3 py-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        />
-                        {imageUrl && (
-                            <div className="mt-2">
-                                <p className="text-xs text-gray-400 mb-1">Pré-visualização:</p>
-                                <img 
-                                    src={imageUrl} 
-                                    alt="Pré-visualização da capa" 
-                                    className="h-40 w-full object-contain rounded-md border border-gray-600 bg-gray-900/50 p-1"
-                                    onError={(e) => {
-                                        e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22200%22%20height%3D%22200%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Crect%20width%3D%22200%22%20height%3D%22200%22%20fill%3D%22%23374151%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20font-family%3D%22Arial%22%20font-size%3D%2212%22%20text-anchor%3D%22middle%22%20dominant-baseline%3D%22middle%22%20fill%3D%22%239CA3AF%22%3EImagem%20n%C3%A3o%20encontrada%3C%2Ftext%3E%3C%2Fsvg%3E';
-                                        e.target.alt = 'Imagem não encontrada';
-                                    }}
-                                />
-                            </div>
-                        )}
-                    </div>
+
                 </div>
                 <div className="bg-gray-700/50 px-6 py-3 flex justify-end gap-3 border-t border-gray-700">
                     <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-600 text-white font-medium rounded-md hover:bg-gray-500 transition-colors">Cancelar</button>

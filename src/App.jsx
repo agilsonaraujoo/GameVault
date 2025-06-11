@@ -3,15 +3,18 @@ import { Gamepad2 } from 'lucide-react';
 import AuthRouter from './components/Auth/AuthRouter';
 import GameDashboard from './components/Dashboard/GameDashboard';
 import LoadingScreen from './components/Common/LoadingScreen';
-import WelcomeToast from './components/Common/WelcomeToast';
+import NotificationToast from './components/Common/NotificationToast';
+import apiService from './services/api';
 
 export default function App() {
     const [user, setUser] = useState(null);
     const [games, setGames] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [welcomeMessage, setWelcomeMessage] = useState('');
+        const [notification, setNotification] = useState({ message: '', type: 'success' });
+    const [selectedGames, setSelectedGames] = useState(new Set());
+    const [isSelectionMode, setSelectionMode] = useState(false);
 
-    // Load user from localStorage on initial render
+    // Carrega o usuário do localStorage na renderização inicial
     useEffect(() => {
         const storedUser = localStorage.getItem('game-catalog-user');
         if (storedUser) {
@@ -20,10 +23,10 @@ export default function App() {
         setIsLoading(false);
     }, []);
 
-    // Load/save games from localStorage based on user
+    // Carrega/salva os jogos do localStorage com base no usuário
     useEffect(() => {
         if (user) {
-            const userIdentifier = user.sub || user.id; // Google uses 'sub', custom uses 'id'
+            const userIdentifier = user.sub || user.id; // Google usa 'sub', login personalizado usa 'id'
             const storedGames = localStorage.getItem(`games_${userIdentifier}`);
             setGames(storedGames ? JSON.parse(storedGames) : []);
         } else {
@@ -40,7 +43,7 @@ export default function App() {
                     if (imageUrl && imageUrl.startsWith('http')) {
                         return game;
                     }
-                    return { ...rest, imageUrl: '' }; // Remove base64 images before storing
+                    return { ...rest, imageUrl: '' }; // Remove imagens base64 antes de salvar
                 });
                 localStorage.setItem(`games_${userIdentifier}`, JSON.stringify(gamesToStore));
             } catch (error) {
@@ -57,11 +60,25 @@ export default function App() {
         return profile.given_name || (profile.name || '').split(' ')[0];
     };
     
-    const handleSetCurrentUser = (profile) => {
+            const handleSetCurrentUser = (profile) => {
         const firstName = getFirstName(profile);
-        setWelcomeMessage(`Bem-vindo(a), ${firstName}!`);
+        setNotification({ message: `Bem-vindo(a), ${firstName}!`, type: 'success' });
         setUser(profile);
         localStorage.setItem('game-catalog-user', JSON.stringify(profile));
+    };
+
+        const handleGoogleLogin = async (response) => {
+        setIsLoading(true);
+        try {
+            const { token, user } = await apiService.post('/auth/google/callback', { credential: response.credential });
+            localStorage.setItem('game-catalog-token', token); // O token JWT é salvo para futuras requisições autenticadas
+            handleSetCurrentUser(user);
+        } catch (error) {
+            console.error('Erro durante o login com o Google:', error);
+            setNotification({ message: error.message, type: 'error' });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleLogout = () => {
@@ -84,7 +101,7 @@ export default function App() {
      const handleBulkSave = (newGames) => {
         const gamesWithIds = newGames.map(game => ({
             ...game,
-            id: `game_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, // More robust ID
+            id: `game_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`, // ID mais robusto
             createdAt: new Date().toISOString()
         }));
         setGames(prevGames => [...gamesWithIds, ...prevGames].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
@@ -94,13 +111,41 @@ export default function App() {
         setGames(games.filter(game => game.id !== gameId));
     };
 
+    const toggleGameSelection = (gameId) => {
+        setSelectedGames(prevSelected => {
+            const newSelected = new Set(prevSelected);
+            if (newSelected.has(gameId)) {
+                newSelected.delete(gameId);
+            } else {
+                newSelected.add(gameId);
+            }
+            return newSelected;
+        });
+    };
+
+    const deleteSelectedGames = () => {
+        setGames(prevGames => prevGames.filter(game => !selectedGames.has(game.id)));
+        setSelectedGames(new Set()); // Limpa a seleção após a exclusão
+        setSelectionMode(false); // Sai do modo de seleção
+    };
+
+    const toggleSelectionMode = () => {
+        setSelectionMode(prevMode => {
+            // Ao sair do modo de seleção, limpa os jogos selecionados
+            if (prevMode) {
+                setSelectedGames(new Set());
+            }
+            return !prevMode;
+        });
+    };
+
     if (isLoading) {
         return <LoadingScreen />;
     }
 
     return (
         <div className="min-h-screen bg-gray-900 text-white font-sans">
-            <WelcomeToast message={welcomeMessage} onClear={() => setWelcomeMessage('')} />
+            <NotificationToast notification={notification} onClear={() => setNotification({ message: '' })} />
             {user ? (
                 <GameDashboard
                     user={user}
@@ -109,9 +154,14 @@ export default function App() {
                     onSaveGame={handleSaveGame}
                     onDeleteGame={handleDeleteGame}
                     onBulkSave={handleBulkSave}
+                    selectedGames={selectedGames}
+                    onToggleGameSelection={toggleGameSelection}
+                    onDeleteSelectedGames={deleteSelectedGames}
+                    isSelectionMode={isSelectionMode}
+                    onToggleSelectionMode={toggleSelectionMode}
                 />
             ) : (
-                <AuthRouter onLoginSuccess={handleSetCurrentUser} />
+                <AuthRouter onLoginSuccess={handleSetCurrentUser} onGoogleLogin={handleGoogleLogin} />
             )}
         </div>
     );

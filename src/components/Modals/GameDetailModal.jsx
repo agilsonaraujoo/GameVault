@@ -3,9 +3,9 @@ import { Sparkles, ShoppingCart, Plus, ExternalLink } from 'lucide-react';
 import Modal from './Modal';
 import PriceTag from '../Dashboard/PriceTag';
 
-// --- IMPORTANT: API KEY SECURITY ---
+// --- IMPORTANTE: SEGURANÇA DA CHAVE DE API ---
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-// --- END API KEY SECURITY ---
+// --- FIM DA SEGURANÇA DA CHAVE DE API ---
 
 const GameDetailModal = ({ isOpen, onClose, game, onRegisterSuggested }) => {
     const [suggestions, setSuggestions] = useState([]);
@@ -80,7 +80,7 @@ const GameDetailModal = ({ isOpen, onClose, game, onRegisterSuggested }) => {
                     />
                      <PriceTag price={game.price} />
                 </div>
-                {/* <h3 className="text-3xl font-bold text-white">{game.name}</h3> Already in Modal Title */}
+                {/* <h3 className="text-3xl font-bold text-white">{game.name}</h3> Já está no título do Modal */}
                 <p className="text-lg font-semibold text-indigo-400">{displayPlatforms}</p>
                 <p className="text-gray-300 whitespace-pre-wrap text-sm">{game.description || "Nenhuma descrição fornecida."}</p>
                 
