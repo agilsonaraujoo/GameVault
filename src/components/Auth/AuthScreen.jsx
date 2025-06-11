@@ -4,7 +4,11 @@ import { GOOGLE_CLIENT_ID } from '../../constants/googleConstants';
 
 const AuthScreen = ({ onGoogleLoginSuccess, onEmailLoginClick }) => {
     useEffect(() => {
-        if (window.google?.accounts?.id) { // Verifica se a biblioteca GSI já foi carregada e inicializada
+        if (window.google?.accounts?.id) { // Verifica se a biblioteca GSI já foi carregada
+            window.google.accounts.id.initialize({
+                client_id: GOOGLE_CLIENT_ID,
+                callback: onGoogleLoginSuccess
+            });
              window.google.accounts.id.renderButton(
                 document.getElementById("google-signin-button"),
                 { theme: "outline", size: "large", type: "standard", text: "continue_with", width: "320", logo_alignment: "left"}
