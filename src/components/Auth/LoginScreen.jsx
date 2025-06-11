@@ -1,28 +1,32 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { getStoredUsers } from '../../utils/authUtils';
+import { auth } from '../../firebase'; // Importa a instância do auth
+import { signInWithEmailAndPassword } from "firebase/auth"; // Importa a função de login
 
 const LoginScreen = ({ onLoginSuccess, onSwitchToRegister, onBack }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        const users = getStoredUsers();
-        const foundUser = users.find(u => u.email === email);
-        
-        // --- AVISO DE SEGURANÇA ---
-        // NUNCA compare senhas diretamente no lado do cliente em uma aplicação real.
-        // Isso é APENAS PARA FINS DE DEMONSTRAÇÃO.
-        // As senhas devem ser hasheadas e verificadas em um servidor backend.
-        if (foundUser && foundUser.password === password) { // INSEGURO: Comparação direta de senha
-            onLoginSuccess(foundUser);
-        } else {
-            setError('E-mail ou senha inválidos.');
+
+        try {
+            // Faz login com o Firebase Auth
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            // Chama a função de sucesso passando o usuário do Firebase
+            onLoginSuccess(userCredential.user);
+
+        } catch (error) {
+            console.error("Erro no login com Firebase:", error);
+            // Mapeia os erros comuns para uma mensagem genérica e segura
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+                setError('E-mail ou senha inválidos.');
+            } else {
+                setError('Ocorreu um erro ao tentar fazer login.');
+            }
         }
-        // --- FIM DO AVISO DE SEGURANÇA ---
     };
 
     return (
