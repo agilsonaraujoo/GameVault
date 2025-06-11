@@ -17,12 +17,7 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// --- MIDDLEWARE DE SEGURANÇA PARA OAUTH --- 
-// Define cabeçalhos para permitir a comunicação segura entre o pop-up de login do Google e o seu site.
-app.use((req, res, next) => {
-    res.setHeader('Cross-Origin-Opener-Policy', 'same-origin-allow-popups');
-    next();
-});
+
 app.use(express.static(path.join(process.cwd(), 'dist')));
 
 // --- CONFIGURAÇÃO DO GOOGLE AUTH ---
