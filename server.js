@@ -16,7 +16,7 @@ const PORT = process.env.PORT || 3000;
 // --- MIDDLEWARE ---
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(process.cwd(), 'dist')));
 
 // --- CONFIGURAÇÃO DO GOOGLE AUTH ---
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -59,7 +59,7 @@ app.post('/api/auth/google/callback', async (req, res) => {
 
 // --- ROTA PARA O FRONTEND ---
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
 });
 
 // --- INICIALIZAÇÃO DO SERVIDOR ---
